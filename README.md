@@ -15,7 +15,7 @@ If you are running Intellij IDEA, edit the .idea/workspace.xml and add the follo
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CluserWorker" type="Application" factoryName="Application">
+    <configuration name="ClusterWorker" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="akka.Main" />
       <module name="link-checker" />
       <option name="VM_PARAMETERS" value="-Dakka.remote.netty.tcp.port=0 -Dakka.cluster.auto-down=on" />
