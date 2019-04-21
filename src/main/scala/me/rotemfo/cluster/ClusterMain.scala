@@ -38,6 +38,7 @@ class ClusterMain extends Actor with ActorLogging {
       if (m.address != cluster.selfAddress) {
         later("https://www.google.com", 1.seconds)
         later("https://www.google.com/2", 2.seconds)
+        later("https://www.google.com/2", 2.seconds)
         later("https://www.google.com/3", 3.seconds)
         later("https://www.google.com/4", 4.seconds)
         later("https://www.google.com/5", 5.seconds)

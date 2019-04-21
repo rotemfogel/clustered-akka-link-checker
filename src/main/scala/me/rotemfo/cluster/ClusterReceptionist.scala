@@ -51,8 +51,7 @@ class ClusterReceptionist extends Actor with ActorLogging {
       val next = addresses.filterNot(_ == member.address)
       if (next.isEmpty) context.become(awaitingMembers)
       else context.become(active(next))
-    case Receptionist.Get(url)
-      if context.children.size < addresses.size =>
+    case Receptionist.Get(url) if context.children.size < addresses.size =>
       val client = sender
       val address = pick(addresses)
       context.actorOf(Props(new Customer(client, url, address)))
