@@ -1,6 +1,7 @@
 package me.rotemfo.linkchecker
 
 import java.util.concurrent.Executor
+import java.util.concurrent.atomic.AtomicInteger
 
 import org.asynchttpclient.DefaultAsyncHttpClient
 
@@ -15,15 +16,14 @@ import scala.concurrent.{Future, Promise}
   */
 trait WebClient {
   def get(url: String)(implicit executor: Executor): Future[String]
-
-  def shutdown(): Unit
 }
 
-object AsyncWebClient extends WebClient {
-  val client = new DefaultAsyncHttpClient
+class AsyncWebClient extends WebClient {
+  private var client = new DefaultAsyncHttpClient
 
-  override def get(url: String)(implicit executor: Executor): Future[String] = {
+  def get(url: String)(implicit executor: Executor): Future[String] = {
     try {
+      if (client.isClosed) client = new DefaultAsyncHttpClient
       val f = client.prepareGet(url).execute()
       val p = Promise[String]()
       f.addListener(() => {
@@ -40,7 +40,24 @@ object AsyncWebClient extends WebClient {
     }
   }
 
-  override def shutdown(): Unit = {
+  def shutdown(): Unit = {
     client.close()
+  }
+}
+
+object AsyncWebClient {
+  private val refCount: AtomicInteger = new AtomicInteger(0)
+  private var asyncWebClient: Option[AsyncWebClient] = None
+
+  def getInstance(): AsyncWebClient = this.synchronized {
+    if (asyncWebClient.isEmpty) asyncWebClient = Some(new AsyncWebClient())
+    refCount.incrementAndGet()
+    asyncWebClient.get
+  }
+
+  def shutdown(): Unit = {
+    val ref = refCount.decrementAndGet()
+    if (ref <= 0)
+      asyncWebClient.get.shutdown()
   }
 }

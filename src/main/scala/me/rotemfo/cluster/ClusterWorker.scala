@@ -25,7 +25,10 @@ class ClusterWorker extends Actor with ActorLogging {
         context.actorSelection(path) ! Identify("receptionist")
       }
     case ActorIdentity("receptionist", None) => context.stop(self)
-    case ActorIdentity("receptionist", Some(ref)) => context.watch(ref)
+    case ActorIdentity("receptionist", Some(ref)) => {
+      log.info("receptionist is at ref: {}", ref)
+      context.watch(ref)
+    }
     case Terminated(_) => context.stop(self)
   }
 

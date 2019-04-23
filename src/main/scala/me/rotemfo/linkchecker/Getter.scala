@@ -27,7 +27,7 @@ class Getter(url: String, depth: Int) extends Actor with ActorLogging {
 
   implicit val executor: ExecutionContextExecutor = context.dispatcher
 
-  protected def webClient: WebClient = AsyncWebClient
+  protected def webClient: WebClient = AsyncWebClient.getInstance()
 
   webClient.get(url).pipeTo(self)
 
@@ -46,7 +46,7 @@ class Getter(url: String, depth: Int) extends Actor with ActorLogging {
     context.stop(self)
   }
 
-  override def postStop(): Unit = webClient.shutdown()
+  override def postStop(): Unit = AsyncWebClient.shutdown()
 
   override def receive: Receive = LoggingReceive {
     case body: String =>

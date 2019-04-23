@@ -39,9 +39,9 @@ class ClusterMain extends Actor with ActorLogging {
         later("https://www.google.com", 1.seconds)
         later("https://www.google.com/2", 2.seconds)
         later("https://www.google.com/2", 2.seconds)
-        later("https://www.google.com/3", 3.seconds)
-        later("https://www.google.com/4", 4.seconds)
-        later("https://www.google.com/5", 5.seconds)
+        later("https://www.google.com/3", 6.seconds)
+        later("https://www.google.com/4", 10.seconds)
+        later("https://www.google.com/5", 15.seconds)
         context.setReceiveTimeout(3.seconds)
       }
     case Receptionist.Failed(url, reason) =>
