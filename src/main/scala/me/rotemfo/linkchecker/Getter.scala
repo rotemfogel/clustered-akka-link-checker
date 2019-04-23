@@ -27,7 +27,7 @@ class Getter(url: String, depth: Int) extends Actor with ActorLogging {
 
   implicit val executor: ExecutionContextExecutor = context.dispatcher
 
-  protected def webClient: WebClient = new AsyncWebClient
+  protected def webClient: WebClient = AsyncWebClient
 
   webClient.get(url).pipeTo(self)
 

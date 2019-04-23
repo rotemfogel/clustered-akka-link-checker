@@ -1,8 +1,9 @@
 package me.rotemfo.cluster
 
-import akka.actor.{Actor, ActorLogging, Address}
+import akka.actor.{Actor, ActorIdentity, ActorLogging, Address, Identify, RootActorPath, Terminated}
 import akka.cluster.{Cluster, ClusterEvent}
 import akka.event.LoggingReceive
+import me.rotemfo.linkchecker.AsyncWebClient
 
 /**
   * project: clustered-link-checker
@@ -19,6 +20,14 @@ class ClusterWorker extends Actor with ActorLogging {
 
   override def receive: Receive = LoggingReceive {
     case ClusterEvent.MemberRemoved(m, _) =>
-      if (m.address == main) context.stop(self)
+      if (m.address == main) {
+        val path = RootActorPath(main) / "user" / "app" / "receptionist"
+        context.actorSelection(path) ! Identify("receptionist")
+      }
+    case ActorIdentity("receptionist", None) => context.stop(self)
+    case ActorIdentity("receptionist", Some(ref)) => context.watch(ref)
+    case Terminated(_) => context.stop(self)
   }
+
+  override def postStop(): Unit = AsyncWebClient.shutdown()
 }

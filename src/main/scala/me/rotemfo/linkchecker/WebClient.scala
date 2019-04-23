@@ -19,7 +19,7 @@ trait WebClient {
   def shutdown(): Unit
 }
 
-class AsyncWebClient extends WebClient {
+object AsyncWebClient extends WebClient {
   val client = new DefaultAsyncHttpClient
 
   override def get(url: String)(implicit executor: Executor): Future[String] = {
